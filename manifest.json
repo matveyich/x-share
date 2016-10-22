@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+
+  "name": "XING share",
+  "description": "This extension allows you to share current URL on XING",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_icon": "xing-logo.png",
+    "default_popup": "popup.html",
+    "default_title": "Share this URL"
+  },
+
+  "background": {
+    "page": "background.html"
+  },
+
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "https://api.xing.com/v1/*",
+    "https://api.xing.com/v1/request_token",
+    "https://api.xing.com/v1/authorize",
+    "https://api.xing.com/v1/access_token"
+  ],
+
+   "web_accessible_resources": ["chrome_ex_oauth.html"]
+}
