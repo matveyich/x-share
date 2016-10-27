@@ -5,24 +5,60 @@ var oauth = ChromeExOAuth.initBackgroundPage({
   'consumer_key': xing_config.consumer_key,
   'consumer_secret': xing_config.consumer_secret
 });
-console.log(oauth);
+//console.log(oauth);
+var userMeGlobal = {};
+
+function user(){
+  this.loggedin = false;
+  this.userMe = {};
+  this.userGroups = {};
+};
+
+var me = new user();
+
+me.setUserMe = function (profile){
+   profile = JSON.parse(profile);
+   me.userMe = profile.users[0];
+   me.loggedin = true;
+}
+
+me.setUserGroups = function (groups){
+  me.userGroups = JSON.parse(groups).groups;
+}
 
 function authorize() {
   oauth.authorize(function() {
     onAuthorized();
   });
+  return me;
 };
 
-function requestCallback(resp, xhr) {
+function requestCallbackToConsole(resp, xhr) {
   console.log(resp);
 };
 
 function onAuthorized() {
+  getUsersMe();
+  getUserGroups();
+};
+
+function getUsersMe(){
   var url = 'https://api.xing.com/v1/users/me';
   var request = {
     'method': 'GET'
   };
+  oauth.sendSignedRequest(url, me.setUserMe, request);
+}
 
-  // Send: GET https://docs.google.com/feeds/default/private/full?alt=json
-  oauth.sendSignedRequest(url, requestCallback, request);
-};
+function getUserGroups(){
+  var url = 'https://api.xing.com/v1/users/me/groups';
+  var request = {
+    'method': 'GET',
+    'parameters': {'limit': 100}
+  };
+  oauth.sendSignedRequest(url, me.setUserGroups, request);
+}
+
+function getUser(){
+  return me;
+}
